@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-dynamic-provisioner
+  labels:
+    app: nfs-client-provisioner
+  # replace with namespace where provisioner is deployed
+  namespace: nfs-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner
+      containers:
+        - name: nfs-container-provisioner
+          image: rkevin/nfs-subdir-external-provisioner:fix-k8s-1.20
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: nfs-server
+            - name: NFS_SERVER
+              value: 172.16.212.20
+            - name: NFS_PATH
+              value: /nfs/k8s
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 172.16.212.20
+            path: /nfs/k8s
