@@ -21,7 +21,8 @@ spec:
       serviceAccountName: nfs-client-provisioner
       containers:
         - name: nfs-container-provisioner
-          image: rkevin/nfs-subdir-external-provisioner:fix-k8s-1.20
+          #image: rkevin/nfs-subdir-external-provisioner:fix-k8s-1.20
+          image: barteksiawrys/k8s-nfs-dynamic-provisioner:latest
           volumeMounts:
             - name: nfs-client-root
               mountPath: /persistentvolumes
